@@ -1,9 +1,11 @@
 package ec.com.fisa.app_fisa_android.presentation.ui.consolidated_position
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
@@ -18,12 +20,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavController
+import ec.com.fisa.app_fisa_android.presentation.ui.consolidated_position.components.FlutterBox
 import io.flutter.embedding.android.FlutterActivity
-import io.flutter.embedding.android.FlutterView
-import io.flutter.embedding.engine.FlutterEngine
-import io.flutter.embedding.engine.dart.DartExecutor
 
 @Composable
 fun ConsolidatedPosition(
@@ -64,40 +63,21 @@ fun ConsolidatedPosition(
                 }) {
                 Text("Traer app flutter")
             }
-            FlutterModuleInCompose()
+
+            FlutterBox(
+                modifier = Modifier.fillMaxWidth(),
+                height = 350.dp,
+                //title = "Análisis Gráfico",
+                //initialRoute = "/position-charts",
+                showCard = true,
+                onError = {
+                    // Manejar errores de Flutter
+                    //showFlutterAnalytics = false
+                    Log.i("Error", "Error al cargar la vista de Flutter")
+                }
+            )
         }
     }
 }
 
 
-@Composable
-fun FlutterModuleInCompose() {
-    Box(
-        modifier = Modifier
-            .background(Color.Gray)
-    ) {
-        AndroidView(
-            factory = { context ->
-                // Crear el FlutterView
-                val flutterEngine = FlutterEngine(context)
-
-                // Configurar la ruta inicial del módulo Flutter
-                flutterEngine.navigationChannel.setInitialRoute("/")
-
-                // Ejecutar el bundle de Dart
-                flutterEngine.dartExecutor.executeDartEntrypoint(
-                    DartExecutor.DartEntrypoint.createDefault()
-                )
-
-                // Crear y retornar el FlutterView
-                FlutterView(context).apply {
-                    attachToFlutterEngine(flutterEngine)
-                }
-            },
-            modifier = Modifier.fillMaxSize(),
-            update = { flutterView ->
-                // Actualizaciones si es necesario
-            }
-        )
-    }
-}
