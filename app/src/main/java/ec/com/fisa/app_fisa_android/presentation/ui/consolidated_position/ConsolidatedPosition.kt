@@ -22,6 +22,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import ec.com.fisa.app_fisa_android.presentation.ui.consolidated_position.components.FlutterBox
+import ec.com.fisa.app_fisa_android.presentation.ui.consolidated_position.components.FlutterBoxWithCommunication
 import io.flutter.embedding.android.FlutterActivity
 
 @Composable
@@ -42,7 +43,6 @@ fun ConsolidatedPosition(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("Esta es la posicion consolidada", textAlign = TextAlign.Center)
             Button(
                 onClick = {
                     consolidatedPositionViewModel.onLoginSelected()
@@ -55,26 +55,24 @@ fun ConsolidatedPosition(
                 maxLines = 1,
                 modifier = Modifier.width(300.dp)
             )
-            Button(
-                onClick = {
-                    context.startActivity(
-                        FlutterActivity.createDefaultIntent(context)
-                    )
-                }) {
-                Text("Traer app flutter")
-            }
-
-            FlutterBox(
+//            FlutterBox(
+//                modifier = Modifier.fillMaxWidth(),
+//                height = 350.dp,
+//                title = "Análisis Gráfico",
+//                initialRoute = "/position-charts",
+//                showCard = true,
+//                onError = {
+//                    // Manejar errores de Flutter
+//                    //showFlutterAnalytics = false
+//                    Log.i("Error", "Error al cargar la vista de Flutter")
+//                }
+//            )
+            FlutterBoxWithCommunication(
                 modifier = Modifier.fillMaxWidth(),
                 height = 350.dp,
-                //title = "Análisis Gráfico",
-                //initialRoute = "/position-charts",
+                title = "Análisis Gráfico",
+                initialRoute = "/",
                 showCard = true,
-                onError = {
-                    // Manejar errores de Flutter
-                    //showFlutterAnalytics = false
-                    Log.i("Error", "Error al cargar la vista de Flutter")
-                }
             )
         }
     }

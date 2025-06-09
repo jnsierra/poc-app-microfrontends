@@ -10,6 +10,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.fragment.app.FragmentContainerView
+import ec.com.fisa.app_fisa_android.AppFisaComposeApp
 import ec.com.fisa.app_fisa_android.MainActivity
 
 @Composable
@@ -191,5 +192,91 @@ fun FlutterIntegrationExample() {
                 style = MaterialTheme.typography.headlineSmall
             )
         }
+    }
+}
+
+
+
+@Composable
+fun FlutterBoxWithCommunication(
+    modifier: Modifier = Modifier,
+    height: Dp = 400.dp,
+    initialRoute: String = "/",
+    initialData: Map<String, Any>? = null,
+    onDataReceived: ((Map<String, Any>) -> Unit)? = null,
+    showCard: Boolean = true,
+    title: String? = null
+) {
+    val context = LocalContext.current
+    val activity = context as? MainActivity
+    val app = context.applicationContext as? AppFisaComposeApp
+    val communicationManager = app?.getCommunicationManager()
+
+    // Configurar callbacks de comunicación
+    LaunchedEffect(onDataReceived) {
+        communicationManager?.onUserDataReceived = onDataReceived
+    }
+
+    // Enviar datos iniciales cuando se monta el componente
+    LaunchedEffect(initialData) {
+        initialData?.let { data ->
+            communicationManager?.sendEventToFlutter("initial_data", data)
+        }
+    }
+
+    if (showCard) {
+        Card(
+            modifier = modifier,
+            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        ) {
+            Column {
+                if (title != null) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = title,
+                            style = MaterialTheme.typography.headlineSmall
+                        )
+
+                        // Botón para enviar datos de prueba a Flutter
+                        Button(
+                            onClick = {
+                                communicationManager?.sendEventToFlutter(
+                                    "test_data",
+                                    mapOf(
+                                        "message" to "Hola desde Android",
+                                        "timestamp" to System.currentTimeMillis()
+                                    )
+                                )
+                            },
+                            modifier = Modifier.size(40.dp),
+                            contentPadding = PaddingValues(0.dp)
+                        ) {
+                            Text("📤")
+                        }
+                    }
+                }
+
+                FlutterContainer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(height)
+                        .padding(if (title != null) 16.dp else 0.dp),
+                    initialRoute = initialRoute,
+                    activity = activity
+                )
+            }
+        }
+    } else {
+        FlutterContainer(
+            modifier = modifier.height(height),
+            initialRoute = initialRoute,
+            activity = activity
+        )
     }
 }
